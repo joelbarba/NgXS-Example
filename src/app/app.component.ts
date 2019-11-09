@@ -41,11 +41,15 @@ export class AppComponent {
       email: 'user99@blueface.com',
       first_name: 'Mrs',
       last_name: 'Tomato'
-    }));
+    })).toPromise().then(data => {
+      console.log('User added', data);
+    });
   };
 
   public deleteUser = (user) => {
-    this.store.dispatch(new RemoveUser(user.id));
+    this.store.dispatch(new RemoveUser(user.id)).toPromise().then(data => {
+      console.log('User deleted', data);
+    });
   };
 
   public editUser = (user) => {

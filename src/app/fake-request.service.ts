@@ -4,7 +4,7 @@ import {map, take} from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class FakeRequestService {
-  private defaultList = [
+  private users = [
     { id:  1, username: 'joel.barba',   email: 'joel@barba.com', first_name: 'Joel', last_name: 'Barba'},
     { id:  2, username: 'syrax',        email: 'syrax@targaryen.com',        first_name: 'Syrax',        last_name: 'Targaryen' },
     { id:  3, username: 'vermithor',    email: 'vermithor@targaryen.com',    first_name: 'Vermithor',    last_name: 'Targaryen' },
@@ -31,18 +31,37 @@ export class FakeRequestService {
     { id: 24, username: 'sheepstealer', email: 'sheepstealer@targaryen.com', first_name: 'Sheepstealer', last_name: 'Targaryen' },
   ];
   constructor() { }
-  public loadUser = () => {
+  public query = () => {
     console.log('Fetching webApi...');
-    return new Promise(resolve => {
-      setInterval(() => {
-        resolve({ users: this.defaultList });
-      }, 5000);
-    });
+    return new Promise(resolve => setInterval(() => resolve({ users: JSON.parse(JSON.stringify(this.users)) }), 3000));
   };
-  public loadUserObs = () => {
-    return interval(5000).pipe(
-      take(1),
-      map(val => ({ users: this.defaultList }))
-    );
+
+  public post = (user) => {
+    console.log('POST user (webApi)...');
+    if (!user.id) {
+      // Adding new user
+      user.id = 'u' + Math.floor(Math.random() * 25000);
+      this.users.push(user);
+      return new Promise(resolve => setInterval(() => resolve(user), 3000));
+
+    } else {
+      // Edit existing user
+      const listUser = this.users.find(u => u.id === user.id);
+      Object.assign(listUser, user);
+      return new Promise(resolve => setInterval(() => resolve(listUser), 3000));
+    }
   };
+
+  public get = (userId) => {
+    console.log('GET user (webApi)...');
+    return new Promise(resolve => setInterval(() => resolve({ ...this.users.filter(u => u.id === userId) }), 3000));
+  };
+
+  public delete = (userId) => {
+    console.log('DELETE user (webApi)...');
+    const listUser = this.users.find(u => u.id === userId);
+    this.users.splice(this.users.indexOf(listUser), 1);
+    return new Promise(resolve => setInterval(() => resolve(null), 3000));
+  };
+
 }

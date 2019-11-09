@@ -31,46 +31,49 @@ export class RemoveUser { static readonly type = '[USERS] Remove'; constructor(p
   defaults: { list: [], count: 0, status: 0 }
 })
 export class UsersState {
+  private loadingPromise;
   constructor(private usersApi: FakeRequestService) { }
 
   @Action(LoadUsers)
   load(ctx: StateContext<IUsersState>) {
-    ctx.patchState({ status: 1 });
-    return this.usersApi.loadUser().then((data: any) => {
-      ctx.setState({ list: data.users, count: data.users.length, status: 2 });
-    });
+    const state = ctx.getState();
+    if (state.status !== 1) { // If already loading, wait for that
+      ctx.patchState({ status: 1 });
+      this.loadingPromise = this.usersApi.query().then((data: any) => {
+        ctx.setState({ list: data.users, count: data.users.length, status: 2 });
+      });
+    }
+    return this.loadingPromise;
   }
 
   @Action(AddUser)
   add(ctx: StateContext<IUsersState>, action: AddUser) {
-    const state = ctx.getState();
-    const id = 'u' + state.list.length;
-    const newUser: IUser = { id, ...action.payload };
-    ctx.patchState({ list: [ ...state.list, newUser ], count: state.count + 1 });
-
-    // OR:
-    // ctx.setState((state) => {
-    //   const nextState = { ...state };
-    //   nextState.list.push(newUser);
-    //   return nextState;
-    // });
+    return this.usersApi.post(action.payload).then((newUser: IUser) => {
+      const state = ctx.getState();
+      ctx.patchState({ list: [ ...state.list, newUser ], count: state.count + 1 });
+    });
   }
 
   @Action(RemoveUser)
   remove(ctx: StateContext<IUsersState>, action: RemoveUser) {
-    const state = ctx.getState();
-    ctx.patchState({ list: state.list.filter(user => user.id !== action.id) });
+    return this.usersApi.delete(action.id).then(() => {
+      const state = ctx.getState();
+      const list = state.list.filter(user => user.id !== action.id);
+      ctx.patchState({ list, count: list.length });
+    });
   }
 
   @Action(EditUser)
   edit(ctx: StateContext<IUsersState>, action: EditUser) {
-    const state = ctx.getState();
-    const newState = state.list.map(user => {
-      if (user.id === action.payload.id) {
-        return { ...user, ...action.payload };
-      }
-      return user;
+    return this.usersApi.post(action.payload).then((user: IUser) => {
+      const state = ctx.getState();
+      const newState = state.list.map(user => {
+        if (user.id === action.payload.id) {
+          return {...user, ...action.payload};
+        }
+        return user;
+      });
+      ctx.patchState({list: newState});
     });
-    ctx.patchState({ list: newState });
   }
 }
