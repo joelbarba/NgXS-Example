@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import {Select, Store} from '@ngxs/store';
 import {UsersState, AddUser, IUsersState, IUsersList, LoadUsers, RemoveUser, EditUser} from './store/users.state';
 import {map} from 'rxjs/operators';
+import {MyStoreService} from './store/my-store';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +21,7 @@ export class AppComponent {
   // public users$: Observable<IUsers>;
   // public usersList$: Observable<Array<IUsers>>;
 
-  constructor(private store: Store) {
+  constructor(private store: Store, public myStore: MyStoreService) {
     // this.users$ = this.store.select(state => state.users);
     this.users$.subscribe(val => console.log(val));
 
@@ -30,33 +31,27 @@ export class AppComponent {
   }
 
   public loadUsers = () => {
-    this.store.dispatch(new LoadUsers()).toPromise().then(data => {
-      console.log('LOADED', data);
-    });
+    this.myStore.loadUsers().then(data => console.log('Loading users', data));
+  };
+  public getUsers = () => {
+    this.myStore.getUsers().then(data => console.log('Getting users', data));
   };
 
   public addUser = () => {
-    this.store.dispatch(new AddUser({
-      username: 'user99',
-      email: 'user99@blueface.com',
-      first_name: 'Mrs',
-      last_name: 'Tomato'
-    })).toPromise().then(data => {
+    this.myStore.addUser({
+      username: 'user99', email: 'user99@blueface.com',
+      first_name: 'Mrs',  last_name: 'Tomato'
+    }).then(data => {
       console.log('User added', data);
     });
   };
 
-  public deleteUser = (user) => {
-    this.store.dispatch(new RemoveUser(user.id)).toPromise().then(data => {
-      console.log('User deleted', data);
-    });
-  };
 
   public editUser = (user) => {
-    this.store.dispatch(new EditUser({
+    this.myStore.editUser({
       id: user.id,
       first_name: user.last_name,
       last_name: user.first_name,
-    }));
+    });
   };
 }

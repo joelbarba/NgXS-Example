@@ -1,6 +1,7 @@
 <h1>NgXS Example</h1>
 
 <div>
+  <button (click)="getUsers()">Get Data</button>
   <button (click)="loadUsers()">Load Data</button>
   <button (click)="addUser()">Add User</button>
 </div>
@@ -8,10 +9,8 @@
 <div>
   <h3>Users:</h3>
   <ul>
-    <!--{{users$ | async | json }}-->
-
-    <li *ngFor="let user of usersList$ | async">
-      <button (click)="deleteUser(user)">Del</button>
+    <li *ngFor="let user of myStore.users$ | async">
+      <button (click)="myStore.removeUser(user.id)">Del</button>
       <button (click)="editUser(user)">Edit</button>
       {{ user.id + ' - ' + user.username + ' : ' + user.first_name + ' ' + user.last_name }}
     </li>
