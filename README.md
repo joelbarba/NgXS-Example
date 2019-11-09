@@ -1,27 +1,18 @@
-# NgXsTest
+# NgXS CRUD Example
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.0.2.
+This is a simple example about how to set a Store + Reducer in an Angular 8 app, using [NgXS](https://www.ngxs.io/advanced/operators)
 
-## Development server
+## Model
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+The store contains an object Users, which has 3 properties: list, count, status.
+The idea is that we store the list of users in "list", and "count" and "status" are helpers to manage the main resource.
+Every user model is defined by User type.
 
-## Code scaffolding
+## Actions
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+There are 4 different actions to perform on the State of the Store:
+`[USERS] Load`
+`[USERS] Add`
+`[USERS] Update`
+`[USERS] Remove`
 
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).

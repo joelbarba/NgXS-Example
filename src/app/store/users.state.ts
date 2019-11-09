@@ -3,6 +3,8 @@ import {FakeRequestService} from '../fake-request.service';
 
 export interface IUsersState {
   list: IUsersList;
+  count: number;
+  status: 0 | 1 | 2 | 3;  // 0=Empty, 1=Loading, 2=Loaded, 3=Error
 }
 export interface IUsersList extends Array<IUser> {}
 export interface IUser extends INewUser { id: string; }               // Full User object
@@ -26,15 +28,16 @@ export class RemoveUser { static readonly type = '[USERS] Remove'; constructor(p
 
 @State<IUsersState>({
   name: 'users',
-  defaults: { list: [] }
+  defaults: { list: [], count: 0, status: 0 }
 })
 export class UsersState {
   constructor(private usersApi: FakeRequestService) { }
 
   @Action(LoadUsers)
   load(ctx: StateContext<IUsersState>) {
+    ctx.patchState({ status: 1 });
     return this.usersApi.loadUser().then((data: any) => {
-      ctx.setState({ list: data.users });
+      ctx.setState({ list: data.users, count: data.users.length, status: 2 });
     });
   }
 
@@ -43,8 +46,7 @@ export class UsersState {
     const state = ctx.getState();
     const id = 'u' + state.list.length;
     const newUser: IUser = { id, ...action.payload };
-    ctx.setState({ list: [ ...state.list, newUser ] });
-    // Or: ctx.patchState({ list: [ ...state.list, newUser ] });
+    ctx.patchState({ list: [ ...state.list, newUser ], count: state.count + 1 });
 
     // OR:
     // ctx.setState((state) => {
@@ -57,7 +59,7 @@ export class UsersState {
   @Action(RemoveUser)
   remove(ctx: StateContext<IUsersState>, action: RemoveUser) {
     const state = ctx.getState();
-    ctx.setState({ list: state.list.filter(user => user.id !== action.id) });
+    ctx.patchState({ list: state.list.filter(user => user.id !== action.id) });
   }
 
   @Action(EditUser)
@@ -69,6 +71,6 @@ export class UsersState {
       }
       return user;
     });
-    ctx.setState({ list: newState });
+    ctx.patchState({ list: newState });
   }
 }
