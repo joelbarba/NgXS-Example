@@ -7,8 +7,8 @@
 </div>
 
 <div>
-  <h3>Users:</h3>fdfdsf
-  status={{myStore.usersState$ | async | json}}
+  <h3>Users:</h3>
+  status={{usersStatus$ | async}}
   <ul>
     <li *ngFor="let user of myStore.users$ | async">
       <button (click)="myStore.removeUser(user.id)">Del</button>

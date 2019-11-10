@@ -19,8 +19,8 @@ export class MyStoreService {
   constructor(private store: Store) {}
 
   @Select() usersState$: Observable<IUsersState>;
-  @Select(state => state.users.list) users$: Observable<IUsersList>;
-  @SelectSnapshot(state => state.users.list) users: IUsersList;
+  @Select(state => state.usersState.list) users$: Observable<IUsersList>;
+  @SelectSnapshot(state => state.usersState.list) users: IUsersList;
 
   getUsers   = (): Promise<IUsersState>                 => this.store.dispatch(new GetUsers()).toPromise();
   loadUsers  = (): Promise<IUsersState>                 => this.store.dispatch(new LoadUsers()).toPromise();

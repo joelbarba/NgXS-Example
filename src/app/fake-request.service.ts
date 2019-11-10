@@ -33,7 +33,7 @@ export class FakeRequestService {
   constructor() { }
   public query = () => {
     console.log('Fetching webApi...');
-    return new Promise(resolve => setInterval(() => resolve({ users: JSON.parse(JSON.stringify(this.users)) }), 3000));
+    return new Promise(resolve => setInterval(() => resolve({ users: JSON.parse(JSON.stringify(this.users)) }), 1000));
   };
 
   public post = (user) => {

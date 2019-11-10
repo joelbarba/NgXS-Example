@@ -11,23 +11,10 @@ import {MyStoreService} from './store/my-store';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-
-  // @Select(UsersState) users$: Observable<IUsers>;
-  @Select() users$: Observable<IUsersState>;   // Reads the "name" of the state (without $)
-  @Select(state => state.users.list) usersList$: Observable<IUsersList>;
-
-  // ---------------------------------------------
-
-  // public users$: Observable<IUsers>;
-  // public usersList$: Observable<Array<IUsers>>;
+  @Select(state => state.usersState.status) usersStatus$: Observable<number>;
 
   constructor(private store: Store, public myStore: MyStoreService) {
-    // this.users$ = this.store.select(state => state.users);
-    this.users$.subscribe(val => console.log(val));
-
-    // this.usersList$ = this.store.select(state => state.users)
-    //   .pipe(map(users => users.list));
-
+    this.myStore.usersState$.subscribe(val => console.log(val));
   }
 
   public loadUsers = () => {
