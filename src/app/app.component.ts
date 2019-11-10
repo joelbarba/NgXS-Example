@@ -34,7 +34,10 @@ export class AppComponent {
     this.myStore.loadUsers().then(data => console.log('Loading users', data));
   };
   public getUsers = () => {
-    this.myStore.getUsers().then(data => console.log('Getting users', data));
+    this.myStore.getUsers().then(data => {
+      console.log('Getting users', data);
+      // data.
+    });
   };
 
   public addUser = () => {
